@@ -106,9 +106,12 @@ class Master extends BaseController
     public function simpanUser()
     {
         $model = new UserModel();
+        if (empty($this->request->getPost('username'))) {
+    return redirect()->back()->with('error', 'Username wajib diisi');
+}
         $model->insert([
             'username' => $this->request->getPost('username'),
-            'password' => hash('sha256', $this->request->getPost('password')),
+            'password' => password_hash($this->request->getPost('password'), PASSWORD_DEFAULT)
             'role'     => $this->request->getPost('role'),
         ]);
         return redirect()->to(base_url('master/user'))->with('success', 'User berhasil ditambahkan');
@@ -144,5 +147,18 @@ class Master extends BaseController
     {
         (new GerbangModel())->delete($id);
         return redirect()->to(base_url('master/gerbang'))->with('success', 'Gerbang berhasil dihapus');
+    }
+
+    public function updateUser()
+    {
+        $model = new UserModel();
+
+        $model->update($this->request->getPost('id_user'), [
+            'username' => $this->request->getPost('username'),
+            'role'     => $this->request->getPost('role'),
+        ]);
+
+        return redirect()->to(base_url('master/user'))
+            ->with('success', 'User berhasil diupdate');
     }
 }

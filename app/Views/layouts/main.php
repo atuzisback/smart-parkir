@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,8 +9,47 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="<?= base_url('css/app.css') ?>">
     <?= $this->renderSection('styles') ?>
+    <link rel="stylesheet" href="...">
+    <style>
+        .tabs-container {
+            margin-bottom: 20px;
+        }
+
+        .tabs-header {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+
+        .tabs-header .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-decoration: none;
+            padding: 12px 18px;
+            background: #fff;
+            border: 1px solid #e5e7eb;
+            border-radius: 12px;
+            color: #64748b;
+            font-weight: 600;
+            transition: .25s;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, .05);
+        }
+
+        .tabs-header .nav-link:hover {
+            background: #f8fafc;
+            color: #4f46e5;
+        }
+
+        .tabs-header .nav-link.active {
+            background: #4f46e5;
+            color: white;
+        }
+    </style>
 </head>
+
 <body>
+    <?php $role = session()->get('role'); ?>
     <!-- Sidebar -->
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
@@ -26,33 +66,41 @@
         </div>
 
         <nav class="sidebar-nav">
-            <div class="nav-section">
-                <span class="nav-section-label">UTAMA</span>
-                <a href="<?= base_url('dashboard') ?>" class="nav-item <?= (current_url() == base_url('dashboard')) ? 'active' : '' ?>">
-                    <i class="fas fa-th-large"></i>
-                    <span>Dashboard</span>
-                </a>
-            </div>
+            <?php if (in_array($role, ['admin', 'manajer', 'petugas'])): ?>
 
-            <div class="nav-section">
-                <span class="nav-section-label">MASTER DATA</span>
-                <a href="<?= base_url('master/slot') ?>" class="nav-item <?= (strpos(current_url(), 'master/slot') !== false) ? 'active' : '' ?>">
-                    <i class="fas fa-map-marked-alt"></i>
-                    <span>Kelola Slot</span>
-                </a>
-                <a href="<?= base_url('master/zona') ?>" class="nav-item <?= (strpos(current_url(), 'master/zona') !== false) ? 'active' : '' ?>">
-                    <i class="fas fa-layer-group"></i>
-                    <span>Zona & Tarif</span>
-                </a>
-                <a href="<?= base_url('master/user') ?>" class="nav-item <?= (strpos(current_url(), 'master/user') !== false) ? 'active' : '' ?>">
-                    <i class="fas fa-users-cog"></i>
-                    <span>Manajemen User</span>
-                </a>
-                <a href="<?= base_url('master/gerbang') ?>" class="nav-item <?= (strpos(current_url(), 'master/gerbang') !== false) ? 'active' : '' ?>">
-                    <i class="fas fa-door-open"></i>
-                    <span>Gerbang</span>
-                </a>
-            </div>
+                <div class="nav-section">
+                    <span class="nav-section-label">MASTER DATA</span>
+                    <a href="<?= base_url('dashboard') ?>" class="nav-item <?= (current_url() == base_url('dashboard')) ? 'active' : '' ?>">
+                        <i class="fas fa-th-large"></i>
+                        <span>Dashboard</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <span class="nav-section-label">MASTER DATA</span>
+                    <a href="<?= base_url('master/slot') ?>" class="nav-item <?= (strpos(current_url(), 'master/slot') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-map-marked-alt"></i>
+                        <span>Kelola Slot</span>
+                    </a>
+                    <?php if (in_array($role, ['admin', 'manajer'])): ?>
+                        <a href="<?= base_url('master/zona') ?>" class="nav-item <?= (strpos(current_url(), 'master/zona') !== false) ? 'active' : '' ?>">
+                            <i class="fas fa-layer-group"></i>
+                            <span>Zona & Tarif</span>
+                        </a>
+                    <?php endif; ?>
+                    <?php if (in_array($role, ['admin', 'manajer'])): ?>
+                        <a href="<?= base_url('master/user') ?>" class="nav-item <?= (strpos(current_url(), 'master/user') !== false) ? 'active' : '' ?>">
+                            <i class="fas fa-users-cog"></i>
+                            <span>Manajemen User</span>
+                        </a>
+                    <?php endif; ?>
+                    <a href="<?= base_url('master/gerbang') ?>" class="nav-item <?= (strpos(current_url(), 'master/gerbang') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-door-open"></i>
+                        <span>Gerbang</span>
+                    </a>
+                </div>
+
+            <?php endif; ?>
 
             <div class="nav-section">
                 <span class="nav-section-label">OPERASIONAL</span>
@@ -70,25 +118,28 @@
                 </a>
             </div>
 
-            <div class="nav-section">
-                <span class="nav-section-label">LAPORAN</span>
-                <a href="<?= base_url('laporan/pendapatan') ?>" class="nav-item <?= (strpos(current_url(), 'laporan/pendapatan') !== false) ? 'active' : '' ?>">
-                    <i class="fas fa-chart-line"></i>
-                    <span>Pendapatan</span>
-                </a>
-                <a href="<?= base_url('laporan/statistik') ?>" class="nav-item <?= (strpos(current_url(), 'laporan/statistik') !== false) ? 'active' : '' ?>">
-                    <i class="fas fa-chart-bar"></i>
-                    <span>Statistik Kendaraan</span>
-                </a>
-                <a href="<?= base_url('laporan/histori') ?>" class="nav-item <?= (strpos(current_url(), 'laporan/histori') !== false) ? 'active' : '' ?>">
-                    <i class="fas fa-history"></i>
-                    <span>Histori Parkir</span>
-                </a>
-                <a href="<?= base_url('laporan/kepadatan') ?>" class="nav-item <?= (strpos(current_url(), 'laporan/kepadatan') !== false) ? 'active' : '' ?>">
-                    <i class="fas fa-heat-map"></i>
-                    <span>Kepadatan Lahan</span>
-                </a>
-            </div>
+            <?php if (in_array($role, ['admin', 'manajer'])): ?>
+
+                <div class="nav-section">
+                    <span class="nav-section-label">LAPORAN</span>
+                    <a href="<?= base_url('laporan/pendapatan') ?>" class="nav-item <?= (strpos(current_url(), 'laporan/pendapatan') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-chart-line"></i>
+                        <span>Pendapatan</span>
+                    </a>
+                    <a href="<?= base_url('laporan/statistik') ?>" class="nav-item <?= (strpos(current_url(), 'laporan/statistik') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-chart-bar"></i>
+                        <span>Statistik Kendaraan</span>
+                    </a>
+                    <a href="<?= base_url('laporan/histori') ?>" class="nav-item <?= (strpos(current_url(), 'laporan/histori') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-history"></i>
+                        <span>Histori Parkir</span>
+                    </a>
+                    <a href="<?= base_url('laporan/kepadatan') ?>" class="nav-item <?= (strpos(current_url(), 'laporan/kepadatan') !== false) ? 'active' : '' ?>">
+                        <i class="fas fa-heat-map"></i>
+                        <span>Kepadatan Lahan</span>
+                    </a>
+                </div>
+            <?php endif; ?>
         </nav>
 
         <div class="sidebar-footer">
@@ -139,27 +190,28 @@
         <!-- Page Content -->
         <main class="page-content">
             <?php if (session()->getFlashdata('success')): ?>
-            <div class="alert alert-success">
-                <i class="fas fa-check-circle"></i>
-                <?= session()->getFlashdata('success') ?>
-                <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
-            </div>
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle"></i>
+                    <?= session()->getFlashdata('success') ?>
+                    <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+                </div>
             <?php endif; ?>
             <?php if (session()->getFlashdata('error')): ?>
-            <div class="alert alert-error">
-                <i class="fas fa-exclamation-circle"></i>
-                <?= session()->getFlashdata('error') ?>
-                <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
-            </div>
+                <div class="alert alert-error">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <?= session()->getFlashdata('error') ?>
+                    <button class="alert-close" onclick="this.parentElement.remove()"><i class="fas fa-times"></i></button>
+                </div>
             <?php endif; ?>
 
             <?= $this->renderSection('content') ?>
         </main>
     </div>
-    
-    
+
+
 
     <script src="<?= base_url('js/app.js') ?>"></script>
     <?= $this->renderSection('scripts') ?>
 </body>
+
 </html>

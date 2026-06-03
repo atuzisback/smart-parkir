@@ -24,6 +24,36 @@ class Dashboard extends BaseController
 
     public function index()
     {
+        $role = session()->get('role');
+        $pendapatan_hari_ini = 0;
+        $chart_labels = [];
+        $chart_values = [];
+        if ($role != 'petugas') {
+
+            $pendapatan_hari_ini = $this->transaksiModel
+                ->selectSum('total_biaya')
+                ->where('DATE(waktu_masuk)', date('Y-m-d'))
+                ->where('status_pembayaran', 'lunas')
+                ->first()['total_biaya'] ?? 0;
+
+            for ($i = 6; $i >= 0; $i--) {
+                $date = date('Y-m-d', strtotime("-$i days"));
+
+                $chart_labels[] = date('d/m', strtotime($date));
+
+                $result = $this->transaksiModel->db
+                    ->query(
+                        "SELECT COALESCE(SUM(total_biaya),0) AS total
+                 FROM transaksi
+                 WHERE DATE(waktu_masuk)=?
+                 AND status_pembayaran='lunas'",
+                        [$date]
+                    )
+                    ->getRow();
+
+                $chart_values[] = (int)($result->total ?? 0);
+            }
+        }
         // Stat cards
         $total_slot     = $this->slotModel->countAll();
         $slot_terisi    = $this->slotModel->where('status_tersedia', 0)->countAllResults();
@@ -89,7 +119,7 @@ class Dashboard extends BaseController
         // Gerbang
         $gerbang_data = $this->gerbangModel->findAll();
 
-        // Live feed (5 terbaru)
+        // Live feed (6 terbaru)
         $live_feed = $this->transaksiModel
             ->select('transaksi.no_plat, transaksi.waktu_masuk, transaksi.waktu_keluar, zona_parkir.nama_zona')
             ->join('tiket_parkir', 'tiket_parkir.id_tiket = transaksi.id_tiket', 'left')
@@ -110,6 +140,7 @@ class Dashboard extends BaseController
             $chart_values[] = (int)($result->total ?? 0);
         }
 
+        // Return diposisikan sekali di sini dengan folder view yang tepat
         return view('dashboard/index', [
             'title'               => 'Dashboard',
             'total_slot'          => $total_slot,

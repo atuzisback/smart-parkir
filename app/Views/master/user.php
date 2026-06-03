@@ -16,33 +16,44 @@
                         <thead>
                             <tr>
                                 <th>No</th>
-                                <th>Nama Lengkap</th>
                                 <th>Username</th>
                                 <th>Role / Jabatan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td>Atuz Zubaidah</td>
-                                <td>atuz_admin</td>
-                                <td><span class="badge bg-danger">Admin Utama</span></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm"><i class="fa-solid fa-user-gear"></i></button>
-                                    <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td>Ayen Pratama</td>
-                                <td>ayen_petugas</td>
-                                <td><span class="badge bg-info text-dark">Petugas Lapangan</span></td>
-                                <td>
-                                    <button class="btn btn-warning btn-sm"><i class="fa-solid fa-user-gear"></i></button>
-                                    <button class="btn btn-danger btn-sm"><i class="fa-solid fa-trash"></i></button>
-                                </td>
-                            </tr>
+                            <?php $no = 1; ?>
+                            <?php foreach ($users as $user): ?>
+
+                                <tr>
+                                    <td><?= $no++ ?></td>
+                                    <td><?= esc($user['username']) ?></td>
+
+                                    <td>
+                                        <?php if ($user['role'] == 'admin'): ?>
+                                            <span class="badge bg-danger">Admin</span>
+                                        <?php elseif ($user['role'] == 'manajer'): ?>
+                                            <span class="badge bg-success">Manajer</span>
+                                        <?php else: ?>
+                                            <span class="badge bg-info">Petugas</span>
+                                        <?php endif; ?>
+                                    </td>
+
+                                    <td>
+                                        Tombol Aksi
+                                    </td>
+                                </tr>
+
+                            <?php endforeach; ?>
+                            <td>
+                                <?php if (session('id_user') != $user['id_user']): ?>
+                                    <a href="<?= base_url('master/hapusUser/' . $user['id_user']) ?>"
+                                        class="btn btn-danger btn-sm"
+                                        onclick="return confirm('Hapus user ini?')">
+                                        <i class="fa fa-trash"></i>
+                                    </a>
+                                <?php endif; ?>
+                            </td>
                         </tbody>
                     </table>
                 </div>
@@ -59,11 +70,8 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <form action="<?= base_url('master/simpanUser'); ?>" method="POST">
+
                 <div class="modal-body">
-                    <div class="mb-3">
-                        <label class="form-label">Nama Lengkap</label>
-                        <input type="text" name="nama" class="form-control" placeholder="Nama asli petugas" required>
-                    </div>
                     <div class="mb-3">
                         <label class="form-label">Username</label>
                         <input type="text" name="username" class="form-control" placeholder="Username untuk login" required>
@@ -75,16 +83,19 @@
                     <div class="mb-3">
                         <label class="form-label">Role / Level</label>
                         <select name="role" class="form-select" required>
-                            <option value="">-- Pilih Akses --</option>
-                            <option value="Admin">Admin Utama</option>
-                            <option value="Petugas">Petugas Lapangan</option>
+                            <option value="">-- Pilih Role --</option>
+                            <option value="admin">Admin</option>
+                            <option value="manajer">Manajer</option>
+                            <option value="petugas">Petugas</option>
                         </select>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
-                    <button type="submit" class="btn btn-primary">Simpan User</button>
-                </div>
+
+            </form>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+                <button type="submit" class="btn btn-primary">Simpan User</button>
+            </div>
             </form>
         </div>
     </div>
