@@ -298,4 +298,16 @@ class Transaksi extends BaseController
             'zona_data'  => $zona_data,
         ]);
     }
+
+    // TAMBAHKAN METHOD INI
+    public function aktif()
+    {
+        $transaksiModel = new \App\Models\TransaksiModel(); // Sesuaikan nama modelmu
+
+        // Ambil data transaksi yang statusnya masih parkir
+        $data['transaksi_aktif'] = $transaksiModel->where('waktu_keluar', null)->findAll();
+
+        // Kirim data ke view dashboard atau view khusus transaksi aktif
+        return redirect()->to(base_url('dashboard'));
+    }
 }
